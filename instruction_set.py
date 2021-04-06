@@ -311,7 +311,7 @@ class TwoRegistersInstruction(Instruction):
                 value = vm.get_label_value(self.value)
             except ValueError as err:
                 raise ValueError(f'Não foi possível converter a '
-                                 f'instrução para heximadecimal. {err}')
+                                 f'instrução para hexadecimal. {err}')
         else:
             value = self.value
 
@@ -595,7 +595,7 @@ class Beq(TwoRegistersInstruction):
                 value = value_fix
             except ValueError as err:
                 raise ValueError(f'Não foi possível converter a '
-                                 f'instrução para heximadecimal. {err}')
+                                 f'instrução para hexadecimal. {err}')
         else:
             value = self.value
 
@@ -814,7 +814,7 @@ class Fill:
                 value = vm.get_label_value(self.value)
             except ValueError as err:
                 raise ValueError(f'Não foi possível converter a instrução '
-                                 f'para heximadecimal. {err}')
+                                 f'para hexadecimal. {err}')
         else:
             value = self.value
 
