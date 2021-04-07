@@ -146,7 +146,7 @@ class Assembler:
         return True
 
     ##
-    # Converts an binaty code entry to a list of instructions
+    # Converts an binary code entry to a list of instructions
     #
     # @return a list of Instruction class instances
     @staticmethod
@@ -166,16 +166,17 @@ class Assembler:
         utils = InstructionsUtils()
 
         try:
+            name = int(name, 2)
             # TODO: (2021) ESSA É A PARTE DO DECODE (LEITURA DE BINÁRIO) QUE IDENTIFICA O FILL
             #  O ELSE É PARA AS INSTRUÇÕES
-            if name[0] == '1':
-                name = '.fill'
-                op0 = utils.twos_complement_binary_to_int(bin_converted[1:])
-            else:
-                name = utils.get_name_by_code(int(name, 2))
+            if 0 <= name <= 7:
+                name = utils.get_name_by_code(name)
                 op0 = int(op0, 2)
                 op1 = int(op1, 2)
                 op2 = utils.twos_complement_binary_to_int(op2)
+            else:
+                name = '.fill'
+                op0 = utils.twos_complement_binary_to_int(bin_converted)
         except ValueError as err:
             raise ValueError(f'Decodificação: {err}')
 
