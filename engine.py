@@ -191,7 +191,6 @@ class Engine:
     # called during its execution
     #
     # @param text texto de entrada do usuário
-    # TODO: Documentar em inglês
     def translate(self, text):
         if not text:
             self.context.log_on_console('Sem itens para traduzir.')
@@ -234,6 +233,7 @@ class Engine:
                     hex_representation = inst.get_hexa_representation(self.virtual_machine)
                     representation = int(hex_representation, 16)
                 self.virtual_machine.set_main_memory_value(representation, i)
+            # TODO: (2021) SW BLOQUEIO DA MEMÓRIA
             self.virtual_machine.block_memory(len(self.execution_queue) - 1)
         except ValueError as err:
             raise ValueError(f'Atualização da memória principal: {err}')
@@ -244,7 +244,6 @@ class Engine:
     #
     def update_vm_labels(self):
         self.create_virtual_machine()
-        self.virtual_machine.clear_labels()
         try:
             self.virtual_machine.clear_labels()
             for i, inst in enumerate(self.execution_queue):
