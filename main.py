@@ -284,7 +284,6 @@ class MainWindow(Window):
     #
     def translate(self):
         self.clear_memory_table()
-        # todo: msg
         self.log_on_console('Traduzindo...')
         text = self.frame_editor.get_editor_text()
 
@@ -294,7 +293,7 @@ class MainWindow(Window):
             self.log_on_console(err)
 
     ##
-    # call the virtal machine method that resest itself data
+    # call the virtual machine method that reset itself data
     #
     def reset_virtual_machine(self):
         vm = self.engine.virtual_machine
@@ -319,7 +318,6 @@ class MainWindow(Window):
     #
     # @param text that will be shown on console
     def log_on_console(self, text):
-        # todo: msg
         self.frame_console.list_widget_console.addItem(
             QListWidgetItem(str(f'{text}')))
         self.frame_console.repaint()

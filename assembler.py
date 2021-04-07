@@ -112,6 +112,9 @@ class Assembler:
 
         for i, line in enumerate(processed_text):
             try:
+                # TODO: (2021) NESSE PONTO PODE SER QUE SEJA POSSÍVEL CRIAR UM FLAG
+                #  INDICANDO SE O HALT JÁ APARECEU OU NÃO. CASO TENHA APARECIDO CADA LINHA
+                #  PASSA A SER IDENTIFICADA COMO FILL
                 if is_binary_code:
                     instruction = self.decode_line(line[0])
                 else:
@@ -163,6 +166,8 @@ class Assembler:
         utils = InstructionsUtils()
 
         try:
+            # TODO: (2021) ESSA É A PARTE DO DECODE (LEITURA DE BINÁRIO) QUE IDENTIFICA O FILL
+            #  O ELSE É PARA AS INSTRUÇÕES
             if name[0] == '1':
                 name = '.fill'
                 op0 = utils.twos_complement_binary_to_int(bin_converted[1:])
