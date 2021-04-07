@@ -782,6 +782,7 @@ class Fill:
                 if negative:
                     value *= -1
 
+                # TODO: (2021) Aqui tem que mudar pois o range vai mudar com a representação nova
                 # Defining possible range
                 min_val = -1 * (2 ** (VirtualMachine.WORD_SIZE - 2))
                 max_val = (2 ** (VirtualMachine.WORD_SIZE - 2)) - 1
@@ -821,10 +822,13 @@ class Fill:
         utils = InstructionsUtils()
 
         try:
+            # TODO: (2021) PEDIDO PARA CONVERSÃO DE FILL
             bin_repr = utils.convert_to_binary_twos_complement(value, VirtualMachine.WORD_SIZE-1)
         except ValueError as err:
             raise ValueError(err)
-
+        # TODO: (2021) TROCANDO O 1 PELO 0 RESOLVE PARCIALMENTE O PROBLEMA
+        #  VAI APRESENTAR O NÚMERO COMO DESEJADO MAS A REPRESENTAÇÃO INTERNA
+        #  E A INTERPRETAÇÃO DE HEXADECIMAIS ESTARA QUEBRADA
         bin_repr = '1' + bin_repr
         output = utils.convert_binary_to_hexadecimal(bin_repr)
 
