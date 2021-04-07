@@ -165,7 +165,7 @@ class InstructionsUtils:
 
     ##
     # Converts a number encoded in binary two's complement to an integer.
-    # rases a *ValueError* if something unnexpexted happens.
+    # rases a *ValueError* if something unexpected happens.
     #
     # returns the converted version of the passes value
     #
