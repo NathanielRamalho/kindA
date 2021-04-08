@@ -297,7 +297,7 @@ class Help(QWidget):
             '    <li class="subitem">' \
             '        <ul>' \
             '            <li>Salva o conteúdo de regB no endereço de memória igual a' \
-            '                regA + off no registrador regB</li>' \
+            '                regA + off.</li>' \
             '        </ul>' \
             '    </li>' \
             '    <li>Sintaxe:</li>' \
@@ -486,7 +486,10 @@ class Help(QWidget):
             '    <li>Funcionamento</li>' \
             '    <li class="subitem">' \
             '        <ul>' \
-            '            <li>Informa ao sistema que deve salvar um valor em memória.</li>' \
+            '            <li>Informa ao sistema que deve salvar um valor em memória. Esse ' \
+            '                valor é um número inteiro codificado em binário em complemento a' \
+            '                dois.' \
+            '            </li>' \
             '        </ul>' \
             '    </li>' \
             '    <li>Sintaxe:</li>' \
@@ -499,12 +502,10 @@ class Help(QWidget):
             '<table align="left">' \
             '    <tr>' \
             '        <th>Bits:</th>' \
-            '        <th>31</th>' \
-            '        <th>30-0</th>' \
+            '        <th>31-0</th>' \
             '    </tr>' \
             '    <tr>' \
             '        <td></td>' \
-            '        <td>Recebe o valor “1”</td>' \
             '        <td>valor</td>' \
             '    </tr>' \
             '</table>' \
