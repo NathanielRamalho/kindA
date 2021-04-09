@@ -369,8 +369,9 @@ class MainWindow(Window):
             self.frame_register.table_register.setItem(i, 1, item_table_widget_hex)
 
     ##
-    # Updates the memory table
+    # Updates the UI memory table
     #
+    # TODO: (2021-SW) Apresentar a nova informação armazenadas pelo sw  na tabela
     def update_memory_table(self):
         memory = dict(self.engine.virtual_machine.main_memory)
         table = self.frame_editor.memory_table
@@ -378,19 +379,22 @@ class MainWindow(Window):
 
         blocked = memory.pop(self.engine.virtual_machine.BLOCKED_ADDRESS_KEY)
 
-        if len(memory) < table.DEFAULT_ROW_COUNT:
-            table.setRowCount(table.DEFAULT_ROW_COUNT)
+        # TODO: (2021-SW) EU ACHO QUE É AQUI QUE ESTÁ  O BUG DE ACRESCENTAR LINHAS EXTRAS
+        #  QUANDO ADICIONA ELEMENTO NO FINAL DA TABELA (COM SW)
+        if len(memory) != table.DEFAULT_ROW_COUNT:
+            table.setRowCount(table.DEFAULT_ROW_COUNT)  # TODO: (2021-SW) DEFAULT = 0
 
         for i, k in enumerate(memory.keys()):
-            # adding new row:
+            # Adding new row:
             table.setRowCount(table.rowCount() + 1)
 
-            # address integer representation
+            # Address integer representation
             table.setItem(i, 0, QTableWidgetItem(str(k)))
 
             vm = self.engine.virtual_machine
 
             if k <= blocked:
+                # TODO: (2021-SW) TALVEZ TENHA QUE ADICIONAR UMA VERIFICAÇÃO SE É INSTRUÇÃO OU NÚMEO
                 inst_hexa = '0x' + queue[k].get_hexa_representation(vm)
                 inst_str = str(queue[k])
             else:
@@ -398,18 +402,20 @@ class MainWindow(Window):
                 inst_hexa = '0x' + f.get_hexa_representation(vm)
                 inst_str = str(memory[k])
 
-            # adicionar em i 1 a instrução
+            # Add the instruction at i 1
             table.setItem(i, 1, QTableWidgetItem(inst_str))
 
-            # adicionar em i 2 o hexa da instrução
+            # Add hexadecimal representation on i 2
             table.setItem(i, 2, QTableWidgetItem(inst_hexa))
 
-            # adicionar em i 3 o endereço em hexa
-            # convertendo o endereço:
+            # Add the hexadecimas address on i 3
+            # Converting the address:
             hexa_address = Utils.convert_to_hexadecimal(k, 8)
             hexa_address = '0x' + hexa_address
             table.setItem(i, 3, QTableWidgetItem(hexa_address))
+
         self.frame_editor.memory_table.repaint()
+        # TODO: (2021-SW) ver oq fazer com a mudança do sw
         self.open_memory_table()
 
     ##
@@ -441,6 +447,7 @@ class MainWindow(Window):
     #
     def open_memory_table(self):
         self.select_memory_table_row(0)
+        # TODO: (2021-SW) verificar se já não está nela
         self.frame_editor.tab_widget_main.setCurrentIndex(1)
 
     ##
