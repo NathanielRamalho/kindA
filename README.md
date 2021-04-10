@@ -1,1 +1,1 @@
-"# kindA" 
+# kindA  
