@@ -12,7 +12,7 @@
 from virtual_machine import VirtualMachine
 from assembler import Assembler
 from time import sleep
-from instruction_set import Fill
+from instruction_set import Fill, Sw
 
 
 class Engine:
@@ -59,8 +59,10 @@ class Engine:
             pc = self.virtual_machine.get_pc()
             if not self.is_valid_pc(pc):
                 self.context.log_on_console('Falha na execução.')
-                self.context.log_on_console('    O endereço de memória acessado não contém uma instrução válida.')
-                self.context.log_on_console('    (Dica: sempre termine seu código com halt)')
+                self.context.log_on_console('    O endereço de memória acessado '
+                                            'não contém uma instrução válida.')
+                self.context.log_on_console('    (Dica: sempre termine seu '
+                                            'código com halt)')
                 self.virtual_machine.reset_pc()
 
                 self.status = StatusReady()
@@ -71,13 +73,23 @@ class Engine:
 
             try:
                 sleep(self.clock)
-                instruction = self.execution_queue[pc].get_hexa_representation(self.virtual_machine)
-                self.virtual_machine.instruction_register = instruction
 
-                success = self.execution_queue[pc].execute(self.virtual_machine)
+                instruction = self.execution_queue[pc]
+
+                if isinstance(instruction, int):
+                    raise ValueError(f'Erro de execução: "{instruction}" não é uma '
+                                     f'instrução válida.\n(endereço de memória: {pc})')
+                else:
+                    inst_representation = self.execution_queue[pc].get_hexa_representation(self.virtual_machine)
+                    self.virtual_machine.instruction_register = inst_representation
+                    success = instruction.execute(self.virtual_machine)
 
                 if success:
                     self.virtual_machine.increment_pc()
+                    if isinstance(instruction, Sw):
+                        self.update_execution_queue()
+                        self.context.update_memory_table()
+                        self.context.update_ui_pc()
                 else:
                     self.status = StatusReady()
                     self.context.log_on_console('Fim da execução.')
@@ -156,13 +168,22 @@ class Engine:
             return
 
         try:
-            instruction = self.execution_queue[pc].get_hexa_representation(self.virtual_machine)
-            self.virtual_machine.instruction_register = instruction
+            instruction = self.execution_queue[pc]
 
-            success = self.execution_queue[pc].execute(self.virtual_machine)
+            if isinstance(instruction, int):
+                raise ValueError(f'Erro de execução: "{instruction}" não é uma '
+                                 f'instrução válida.\n(endereço de memória: {pc})')
+            else:
+                inst_representation = self.execution_queue[pc].get_hexa_representation(self.virtual_machine)
+                self.virtual_machine.instruction_register = inst_representation
+                success = instruction.execute(self.virtual_machine)
 
             if success:
                 self.virtual_machine.increment_pc()
+                if isinstance(instruction, Sw):
+                    self.update_execution_queue()
+                    self.context.update_memory_table()
+                    self.context.update_ui_pc()
             else:
                 self.context.action_avancar.setDisabled(True)
                 self.context.log_on_console('Fim da Execução em Etapas.')
@@ -218,6 +239,32 @@ class Engine:
             raise ValueError(err)
 
     ##
+    #   Updates execution_queue based on virual_machine.main_memory
+    #
+    #   @see VirtualMachine
+    def update_execution_queue(self):
+        memory = self.virtual_machine.main_memory
+
+        # TODO: Maybe this test is unnecessary
+        if self.virtual_machine.BLOCKED_ADDRESS_KEY in memory.keys():
+            memory.pop(self.virtual_machine.BLOCKED_ADDRESS_KEY)
+
+        for i, k in enumerate(memory.keys()):
+            if i >= len(self.execution_queue):
+                self.execution_queue.append(memory[k])
+            else:
+                inst = self.execution_queue[i]
+                if isinstance(inst, int):
+                    value = inst
+                else:
+                    value = inst.get_hexa_representation(self.virtual_machine)
+                    value = int(value, 16)
+                if value != self.virtual_machine.main_memory[k]:
+                    self.execution_queue[i] = memory[k]
+
+        self.virtual_machine.block_memory(len(self.execution_queue) - 1)
+
+    ##
     # Updates the data in the main memory of the virtual machine
     #
     def update_vm_main_memory(self):
@@ -233,7 +280,7 @@ class Engine:
                     hex_representation = inst.get_hexa_representation(self.virtual_machine)
                     representation = int(hex_representation, 16)
                 self.virtual_machine.set_main_memory_value(representation, i)
-            # TODO: (2021) SW BLOQUEIO DA MEMÓRIA
+            # TODO: (2021-sw) BLOQUEIO DA MEMÓRIA - TALVEZ REMOVER O TESTE EM UPDATE_EXECUTION_QUEUE
             self.virtual_machine.block_memory(len(self.execution_queue) - 1)
         except ValueError as err:
             raise ValueError(f'Atualização da memória principal: {err}')
@@ -267,7 +314,6 @@ class Engine:
     ##
     # Creates a virtual machine if not exists
     #
-    # TODO: documentar
     def create_virtual_machine(self):
         if self.virtual_machine is None:
             self.virtual_machine = VirtualMachine(self.context)

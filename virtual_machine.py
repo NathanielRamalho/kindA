@@ -31,7 +31,6 @@ class VirtualMachine:
     #
     # @param value that will be applied on register
     # @param is the address of the register
-    # TODO: Documentar
     def set_register_value(self, value: int, register):
         if not isinstance(value, int):
             raise ValueError('Valor inválido para atribuição em registrador.')
@@ -97,8 +96,8 @@ class VirtualMachine:
             except KeyError:
                 return 0
         else:
-            # TODO: msg
-            raise ValueError(f'O endereço "{address}" da memória principal não pode ser acessado.')
+            raise ValueError(f'O endereço "{address}" da memória '
+                             f'principal não pode ser acessado.')
 
         return data
 
@@ -109,10 +108,6 @@ class VirtualMachine:
     # @param address that the date will be stored
     def set_main_memory_value(self, value, address):
         blocked_addresses = self.get_blocked_memory_addresses()
-
-        if blocked_addresses >= 0:
-            if 0 <= address <= blocked_addresses:
-                raise MemoryError(f'O endereço {address} está bloqueado para gravação.')
 
         if 0 <= address <= self.MAX_MEM_ADDRESS:
             self.main_memory[address] = value
@@ -160,7 +155,6 @@ class VirtualMachine:
         try:
             value = self.labels[key]
         except KeyError as k:
-            # TODO: msg
             raise ValueError(f'O label {k} não foi encontrado.')
 
         return value

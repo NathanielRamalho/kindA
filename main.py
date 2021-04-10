@@ -13,7 +13,7 @@ from PySide2.QtCore import Qt
 from ui_help import Help
 from ui_main_window import Window
 from engine import Engine
-from instruction_set import InstructionsUtils as Utils, Fill
+from instruction_set import InstructionsUtils as Utils, Fill, Instruction
 from assembler import Assembler
 import sys
 
@@ -219,6 +219,7 @@ class MainWindow(Window):
                 self.path_external_document = name[0]
                 self.is_external_document = True
                 self.action_fechar.setDisabled(False)
+                self.open_code_editor_tab()
         except UnicodeDecodeError as err:
             # todo: tratar melhor essa exceção
             error = 'Falha ao abrir o arquivo'
@@ -371,18 +372,15 @@ class MainWindow(Window):
     ##
     # Updates the UI memory table
     #
-    # TODO: (2021-SW) Apresentar a nova informação armazenadas pelo sw  na tabela
     def update_memory_table(self):
         memory = dict(self.engine.virtual_machine.main_memory)
         table = self.frame_editor.memory_table
         queue = self.engine.execution_queue
 
-        blocked = memory.pop(self.engine.virtual_machine.BLOCKED_ADDRESS_KEY)
+        if self.engine.virtual_machine.BLOCKED_ADDRESS_KEY in memory.keys():
+            blocked = memory.pop(self.engine.virtual_machine.BLOCKED_ADDRESS_KEY)
 
-        # TODO: (2021-SW) EU ACHO QUE É AQUI QUE ESTÁ  O BUG DE ACRESCENTAR LINHAS EXTRAS
-        #  QUANDO ADICIONA ELEMENTO NO FINAL DA TABELA (COM SW)
-        if len(memory) != table.DEFAULT_ROW_COUNT:
-            table.setRowCount(table.DEFAULT_ROW_COUNT)  # TODO: (2021-SW) DEFAULT = 0
+        table.setRowCount(table.DEFAULT_ROW_COUNT)
 
         for i, k in enumerate(memory.keys()):
             # Adding new row:
@@ -392,9 +390,10 @@ class MainWindow(Window):
             table.setItem(i, 0, QTableWidgetItem(str(k)))
 
             vm = self.engine.virtual_machine
+            # if index < len(queue) and if Instruction
+            # else
 
-            if k <= blocked:
-                # TODO: (2021-SW) TALVEZ TENHA QUE ADICIONAR UMA VERIFICAÇÃO SE É INSTRUÇÃO OU NÚMEO
+            if i < len(queue) and (isinstance(queue[i], Instruction) or isinstance(queue[i], Fill)):
                 inst_hexa = '0x' + queue[k].get_hexa_representation(vm)
                 inst_str = str(queue[k])
             else:
@@ -415,7 +414,6 @@ class MainWindow(Window):
             table.setItem(i, 3, QTableWidgetItem(hexa_address))
 
         self.frame_editor.memory_table.repaint()
-        # TODO: (2021-SW) ver oq fazer com a mudança do sw
         self.open_memory_table()
 
     ##
@@ -447,8 +445,13 @@ class MainWindow(Window):
     #
     def open_memory_table(self):
         self.select_memory_table_row(0)
-        # TODO: (2021-SW) verificar se já não está nela
         self.frame_editor.tab_widget_main.setCurrentIndex(1)
+
+    ##
+    # Brings the Code Editor tab to front
+    #
+    def open_code_editor_tab(self):
+        self.frame_editor.tab_widget_main.setCurrentIndex(0)
 
     ##
     # Updates the program counter display

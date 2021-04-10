@@ -534,7 +534,6 @@ class Help(QWidget):
             '</p><br><br>' \
             '</body>' \
             '</html>'
-        # TODO: (2021) ALTERAR A DOCUMENTAÇÃO PARA FILL
         txt1 = QTextEdit()
         txt1.setHtml(t)
         txt1.setReadOnly(True)

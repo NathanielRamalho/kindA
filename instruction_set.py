@@ -125,7 +125,6 @@ class InstructionsUtils:
     #
     # @param is an integer on string format
     # @return hexadecimal representatio
-    # todo: documentar em inglês
     @staticmethod
     def convert_binary_to_hexadecimal(num: str):
         num = hex(int(num, 2))[2:]
@@ -195,7 +194,6 @@ class InstructionsUtils:
 ##
 # It is an abstract class from which all instructions inherits
 #
-# todo: documentar
 class Instruction:
     INSTRUCTION_CODE = 'super'
 
@@ -406,7 +404,6 @@ class Add(Instruction):
             result = int(value_a + value_b)
             vm.set_register_value(result, self.reg_dest)
         except ValueError as err:
-            # todo: msg
             raise ValueError(f'Erro de Execução: {err}')
 
         return True
@@ -665,12 +662,10 @@ class Jalr(Instruction):
         try:
             result = int(pc + 1)
             vm.set_register_value(result, self.reg_b)
-            # todo: em ingles
-            # recebe o valor do registrador menos 1 pois
-            #  ao final da execução o engine vai incrementar o pc
+            # Receives the register value minus 1
+            # because at the end the Engine will increment pc
             vm.set_pc(value_reg_a - 1)
         except (TypeError, ValueError) as err:
-            # TODO: msg
             raise ValueError(f'Erro de Execução: {err}')
 
         return True
@@ -782,10 +777,9 @@ class Fill:
                 if negative:
                     value *= -1
 
-                # TODO: (2021) Aqui tem que mudar pois o range vai mudar com a representação nova
                 # Defining possible range
-                min_val = -1 * (2 ** (VirtualMachine.WORD_SIZE - 2))
-                max_val = (2 ** (VirtualMachine.WORD_SIZE - 2)) - 1
+                min_val = -1 * (2 ** (VirtualMachine.WORD_SIZE - 1))
+                max_val = (2 ** (VirtualMachine.WORD_SIZE - 1)) - 1
 
                 if value < min_val or value > max_val:
                     raise ValueError(f'.fill deve receber um valor entre '
@@ -822,13 +816,9 @@ class Fill:
         utils = InstructionsUtils()
 
         try:
-            # TODO: (2021) PEDIDO PARA CONVERSÃO DE FILL
             bin_repr = utils.convert_to_binary_twos_complement(value, VirtualMachine.WORD_SIZE)
         except ValueError as err:
             raise ValueError(err)
-        # TODO: (2021) TROCANDO O 1 PELO 0 RESOLVE PARCIALMENTE O PROBLEMA
-        #  VAI APRESENTAR O NÚMERO COMO DESEJADO MAS A REPRESENTAÇÃO INTERNA
-        #  E A INTERPRETAÇÃO DE HEXADECIMAIS ESTARA QUEBRADA
         # bin_repr = '1' + bin_repr
         output = utils.convert_binary_to_hexadecimal(bin_repr)
 

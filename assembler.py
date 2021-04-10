@@ -52,7 +52,6 @@ class Assembler:
                     name = line[1].strip().lower()
                     ini = 2
                 else:
-                    # todo: msg
                     raise ValueError('O label só pode começar com letras.')
             except IndexError:
                 raise ValueError('Sintaxe incorreta.')
@@ -112,9 +111,6 @@ class Assembler:
 
         for i, line in enumerate(processed_text):
             try:
-                # TODO: (2021) NESSE PONTO PODE SER QUE SEJA POSSÍVEL CRIAR UM FLAG
-                #  INDICANDO SE O HALT JÁ APARECEU OU NÃO. CASO TENHA APARECIDO CADA LINHA
-                #  PASSA A SER IDENTIFICADA COMO FILL
                 if is_binary_code:
                     instruction = self.decode_line(line[0])
                 else:
@@ -167,8 +163,6 @@ class Assembler:
 
         try:
             name = int(name, 2)
-            # TODO: (2021) ESSA É A PARTE DO DECODE (LEITURA DE BINÁRIO) QUE IDENTIFICA O FILL
-            #  O ELSE É PARA AS INSTRUÇÕES
             if 0 <= name <= 7:
                 name = utils.get_name_by_code(name)
                 op0 = int(op0, 2)
