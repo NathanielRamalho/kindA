@@ -350,7 +350,7 @@ class Window(QMainWindow):
         about.about(
             self,
             'Sobre o kindA',
-            'kindA versão 1.0 (11/2020)\n\n\nAutor: Nathaniel Ramalho')
+            'kindA versão 1.0.1 (Beta) (04/2021)\n\n\nAutor: Nathaniel Ramalho')
         # about.show()
 
 
